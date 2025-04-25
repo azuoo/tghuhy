@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>رابط الإحالة</title>
+</head>
+<body style="text-align:center; padding:40px; font-family:Tajawal,sans-serif;">
+  <h2>رابط الإحالة الخاص بك:</h2>
+  <input type="text" id="refLink" style="width:100%; padding:10px; font-size:18px;" readonly>
+
+  <script>
+    const referralCode = localStorage.getItem('referralCode');
+    if (referralCode) {
+      const fullLink = `https://yourwebsite.com/index.html?ref=${referralCode}`;
+      document.getElementById("refLink").value = fullLink;
+    } else {
+      document.getElementById("refLink").value = "لم يتم إنشاء رابط إحالة بعد.";
+    }
+  </script>
+</body>
+</html>

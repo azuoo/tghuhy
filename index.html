@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Invest Robot – دخول / تسجيل</title>
+  <style>
+      .logo {
+    width: 20px;
+    height: 20px;
+    border-radius: 45%;
+    object-fit: cover; /* عشان ما تتشوه الصورة */
+  }
+    /* ---------- أساسيات التصميم ---------- */
+    :root {
+      --bg-start: #1e0d47;
+      --bg-end: #100622;
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #ffffff;
+      --text-muted: #c9c9d1;
+      --input-bg: rgba(255, 255, 255, 0.07);
+      --btn-start: #b6a6ff;
+      --btn-end: #9affdd;
+      --radius: 14px;
+    }
+    *{box-sizing:border-box;font-family:"Tajawal",sans-serif}
+    body{
+      margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(circle at 30% 20%,rgba(255,255,255,0.05) 0 120px,transparent 200px),
+                radial-gradient(circle at 90% 70%,rgba(255,255,255,0.05) 0 150px,transparent 260px),
+                linear-gradient(180deg,var(--bg-start),var(--bg-end));
+      color:var(--text-main);
+    }
+    /* ---------- حاوية رئيسية ---------- */
+    .container{width:100%;max-width:480px;padding:2rem 1rem 4rem;text-align:center}
+    .logo{width:100px;margin:0 auto 0.5rem}
+    h1{margin:0 0 2rem;font-size:1.6rem;font-weight:600}
+    .card{background:var(--card-bg);border:1px solid var(--card-border);backdrop-filter:blur(10px);border-radius:var(--radius);padding:2rem 1.2rem}
+    /* ---------- عناصر مشتركة ---------- */
+    input{width:100%;padding:0.95rem 1rem;border:none;border-radius:var(--radius);background:var(--input-bg);color:var(--text-main);font-size:0.9rem;outline:none}
+    input::placeholder{color:var(--text-muted)}
+    .btn{border:none;cursor:pointer;padding:0.95rem 1rem;font-size:1rem;font-weight:600;border-radius:var(--radius);background:linear-gradient(to left,var(--btn-start),var(--btn-end));color:#000;transition:transform .2s}
+    .btn:active{transform:scale(.97)}
+    .link{color:var(--btn-end);cursor:pointer;text-decoration:none}
+    .small-text{font-size:.85rem;color:var(--text-muted)}
+    .hidden{display:none}
+    /* ---------- تبويبات ---------- */
+    .tabs{display:flex;margin-bottom:1.8rem}
+    .tab{flex:1;padding:.9rem 0;cursor:pointer;font-size:.9rem;color:var(--text-muted);position:relative;transition:color .3s}
+    .tab.active{color:var(--text-main)}
+    .tab.active::after{content:"";position:absolute;bottom:0;left:10%;width:80%;height:2px;background:var(--btn-end);border-radius:2px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo.png.jpg" alt="AI Invest Robot Logo" class="logo" style="width: 200px; height: auto;">
+    <h1>AI Invest Robot</h1>
+    <!-- Tabs بين تسجيل الدخول والتسجيل -->
+    <div class="tabs">
+      <div id="loginTab" class="tab active">تسجيل الدخول</div>
+      <div id="registerTab" class="tab">إنشاء حساب</div>
+    </div>
+
+    <!-- =========== بطاقة تسجيل الدخول =========== -->
+    <div id="loginCard" class="card">
+      <form id="loginForm" autocomplete="off">
+        <input id="loginEmail" type="email" placeholder="البريد الإلكتروني" required>
+        <input id="loginPass"  type="password" placeholder="كلمة المرور" required style="margin-top:1.1rem">
+        <button class="btn" style="margin-top:1.4rem;width:100%">دخول</button>
+      </form>
+
+      <!-- التحذير بالأحمر إذا حاول المستخدم الدخول دون تسجيل -->
+      <p id="loginWarning" class="small-text hidden" style="color:#ff4d4f;margin-top:0.8rem">
+        يجب أن تسجل في الموقع أولاً
+      </p>
+
+      <p class="small-text" style="margin-top:1rem">لا يوجد حساب؟ <span id="goRegister" class="link">أنشئ حساب</span></p>
+    </div>
+
+    <!-- =========== بطاقة التسجيل =========== -->
+    <div id="registerCard" class="card hidden">
+      <form id="registerForm" autocomplete="off">
+        <input id="regEmail" type="email" placeholder="البريد الإلكتروني" required>
+        <input id="regPass"  type="password" placeholder="كلمة المرور" required style="margin-top:1.1rem">
+        <input id="regPass2" type="password" placeholder="تأكيد كلمة المرور" required style="margin-top:1.1rem">
+        <button class="btn" style="margin-top:1.4rem;width:100%">تسجيل</button>
+      </form>
+      <p class="small-text" style="margin-top:1rem">لديك حساب؟ <span id="goLogin" class="link">سجّل دخول</span></p>
+    </div>
+  </div>
+
+  <script>
+    /* ========== عناصر DOM ========= */
+    const loginTab     = document.getElementById('loginTab');
+    const registerTab  = document.getElementById('registerTab');
+    const loginCard    = document.getElementById('loginCard');
+    const registerCard = document.getElementById('registerCard');
+
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginWarning = document.getElementById('loginWarning');
+
+    /* ========== تبديل التبويبات ========= */
+    loginTab.onclick = () => switchScreen(true);
+    registerTab.onclick = () => switchScreen(false);
+    document.getElementById('goRegister').onclick = () => switchScreen(false);
+    document.getElementById('goLogin').onclick   = () => switchScreen(true);
+
+    function switchScreen(isLogin){
+      loginTab.classList.toggle('active',isLogin);
+      registerTab.classList.toggle('active',!isLogin);
+      loginCard.classList.toggle('hidden',!isLogin);
+      registerCard.classList.toggle('hidden',isLogin);
+    }
+
+    /* ========== تخزين المستخدم محلياً ========= */
+    function saveUser(email,password){
+      localStorage.setItem('userEmail',email);
+      localStorage.setItem('userPass',password);
+    }
+    function userExists(){
+      return localStorage.getItem('userEmail');
+    }
+/* ========== معالجة التسجيل ========= */
+registerForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const email = regEmail.value.trim();
+  const pass1 = regPass.value;
+  const pass2 = regPass2.value;
+
+  if (pass1 !== pass2) {
+    alert('كلمتا المرور غير متطابقتين');
+    return;
+  }
+
+  // توليد كود إحالة فريد (مثلاً: user293)
+  const referralCode = "user" + Math.floor(Math.random() * 10000);
+
+  // حفظ بيانات المستخدم
+  saveUser(email, pass1);
+  localStorage.setItem('referralCode', referralCode);
+
+  alert('تم التسجيل بنجاح! يمكنك تسجيل الدخول الآن.');
+  switchScreen(true);
+});
+
+    /* ========== معالجة تسجيل الدخول ========= */
+    loginForm.addEventListener('submit',e=>{
+      e.preventDefault();
+      loginWarning.classList.add('hidden');   // إخفاء التحذير كل محاولة
+
+      if(!userExists()){
+        loginWarning.classList.remove('hidden'); // إظهار التحذير بالأحمر
+        switchScreen(false);
+        return;
+      }
+
+      const email = loginEmail.value.trim();
+      const pass  = loginPass.value;
+      if(email===localStorage.getItem('userEmail') && pass===localStorage.getItem('userPass')){
+        // location.href = 'dashboard.html';
+      }else{
+        alert('بيانات غير صحيحة');
+      }
+      window.location.href = "home.html";
+    });
+  </script>
+</body>
+</html>
