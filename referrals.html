@@ -1,21 +1,36 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>رابط الإحالة</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صفحة الإحالات</title>
 </head>
-<body style="text-align:center; padding:40px; font-family:Tajawal,sans-serif;">
-  <h2>رابط الإحالة الخاص بك:</h2>
-  <input type="text" id="refLink" style="width:100%; padding:10px; font-size:18px;" readonly>
+<body>
+    <h1>صفحة الإحالات</h1>
+    
+    <!-- عرض رابط الإحالة للمستخدم -->
+    <p>رابطك المميز للمشاركة: <a id="referralLink" href="#">رابط الإحالة</a></p>
+    
+    <!-- عرض عدد الأشخاص الذين سجلوا باستخدام رابط الإحالة -->
+    <p>عدد الأشخاص الذين سجلوا باستخدام رابطك: <span id="referralsCount">0</span></p>
 
-  <script>
-    const referralCode = localStorage.getItem('referralCode');
-    if (referralCode) {
-      const fullLink = `https://yourwebsite.com/index.html?ref=${referralCode}`;
-      document.getElementById("refLink").value = fullLink;
-    } else {
-      document.getElementById("refLink").value = "لم يتم إنشاء رابط إحالة بعد.";
-    }
-  </script>
+    <script>
+    // جلب كود الإحالة من LocalStorage أو من مكان آخر
+    const referralCode = localStorage.getItem('referralCode') || 'ABC123';  // أو استخدم الطريقة المناسبة لديك لجلب كود الإحالة
+    
+    // عرض الرابط المميز
+    const referralLink = https://yourdomain.com/signup?ref=${referralCode};
+    document.getElementById('referralLink').href = referralLink;
+
+    // جلب عدد الأشخاص الذين سجلوا باستخدام الرابط من Google Apps Script
+    fetch(`https://script.google.com/macros/s/AKfycbwBOLuIHduv68af14S3jCWB4ZF5zgLEKwUtmkr7zSbzxeRZmZoyBsC2kugp8vxcjJTK/exec?referralCode=${referralCode}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('referralsCount').innerText = data.count;
+        })
+        .catch(error => {
+            console.error('Error fetching referral data:', error);
+        });
+</script>
 </body>
 </html>
