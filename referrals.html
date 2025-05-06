@@ -6,31 +6,34 @@
         body { 
             font-family: Arial, sans-serif; 
             text-align: center; 
-            margin-top: 50px; 
-            direction: rtl; /* للنصوص العربية */
+            margin-top: 50px;
+            direction: rtl;
         }
         .box { 
-            background: #f0f0f0; 
-            padding: 20px; 
-            display: inline-block; 
-            border-radius: 10px; 
-            max-width: 90%;
+            background: #f5f5f5;
+            padding: 30px;
+            border-radius: 10px;
+            display: inline-block;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 90%;
         }
-        input { 
-            padding: 10px; 
-            width: 300px; 
-            margin: 10px; 
-            border: 1px solid #ddd; 
+        input {
+            padding: 12px;
+            width: 300px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 16px;
         }
-        button { 
-            padding: 10px 20px; 
-            background: #4285f4; 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
+        button {
+            padding: 12px 25px;
+            background: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
         }
         button:hover {
             background: #3367d6;
@@ -39,33 +42,38 @@
 </head>
 <body>
     <div class="box">
-        <h2>إحصائيات الإحالات</h2>
+        <h2>نظام الإحالات</h2>
         <div>
             <p>رابط الإحالة الخاص بك:</p>
             <input type="text" id="refLink" readonly>
             <button onclick="copyLink()">نسخ الرابط</button>
         </div>
-        <div style="margin-top: 20px;">
+        <div style="margin-top: 25px;">
             <p>عدد الزيارات عبر رابطك: <strong id="visitCount">0</strong></p>
         </div>
     </div>
 
     <script>
-        // رابط سكريبت جوجل (استبدله برابطك الحقيقي)
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKqdanpYTKmsW71uap5Voip5EfnQLZddI9pL87J_5rVJ2C6mnWfkB14uSGmPBpv4dJjw/exec";
-        
-        // إنشاء أو استرجاع كود الإحالة
-        let refCode = localStorage.getItem('refCode');
+        // الروابط الأساسية (يجب استبدالها بروابطك الخاصة)
+        const WEBSITE_URL = "https://azuoo.github.io/tghuhy/";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKqdanpYTKmsW71uap5Voip5EfnQLZddI9pL87J_5rVJ2C6mnWfkB14uSGmPBpv4dJjw/exec";
+
+        // إنشاء كود إحالة فريد
+        function generateReferralCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        // الحصول على أو إنشاء كود الإحالة
+        let refCode = localStorage.getItem('referralCode');
         if (!refCode) {
             refCode = generateReferralCode();
-            localStorage.setItem('refCode', refCode);
+            localStorage.setItem('referralCode', refCode);
         }
-        
-        // إنشاء رابط الإحالة
-        const currentUrl = window.location.href.split('?')[0]; // إزالة أي إحالة موجودة
-        const refLink = currentUrl + "?ref=" + refCode;
-        document.getElementById("refLink").value = refLink;
-        
+
+        // إنشاء رابط الإحالة الكامل
+        const referralLink = WEBSITE_URL + "index.html?ref=" + refCode;
+        document.getElementById("refLink").value = referralLink;
+
         // دالة نسخ الرابط
         function copyLink() {
             const linkInput = document.getElementById("refLink");
@@ -73,30 +81,44 @@
             document.execCommand("copy");
             alert("تم نسخ الرابط بنجاح!");
         }
-        
-        // دالة إنشاء كود إحالة
-        function generateReferralCode() {
-            return Math.random().toString(36).substring(2, 8).toUpperCase();
+
+        // دالة إرسال بيانات الإحالة إلى جوجل شيتس
+        function sendReferralData() {
+            const data = {
+                action: "addReferral",
+                referrer: refCode,
+                referral: "new_user",
+                date: new Date().toISOString()
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.text())
+            .then(result => console.log("تم تسجيل الإحالة:", result))
+            .catch(error => console.error("Error:", error));
         }
-        
+
         // دالة تحديث العداد
         function updateCounter() {
-            fetch(${SCRIPT_URL}?action=getCount&code=${refCode})
-                .then(response => {
-                    if (!response.ok) throw new Error("Network error");
-                    return response.json();
-                })
+            fetch(${GOOGLE_SCRIPT_URL}?action=getCount&code=${refCode})
+                .then(response => response.json())
                 .then(data => {
-                    document.getElementById("visitCount").innerText = data.count || "0";
+                    document.getElementById("visitCount").textContent = data.count || "0";
                 })
                 .catch(error => {
-                    console.error("Error:", error);
+                    console.log("حدث خطأ في الاتصال:", error);
                 });
         }
-        
-        // تحديث العداد كل 5 ثواني
-        updateCounter();
-        setInterval(updateCounter, 5000);
+
+        // تهيئة النظام
+        sendReferralData(); // تسجيل الإحالة الأولى
+        updateCounter(); // تحديث العداد
+        setInterval(updateCounter, 10000); // تحديث كل 10 ثواني
     </script>
 </body>
 </html>
